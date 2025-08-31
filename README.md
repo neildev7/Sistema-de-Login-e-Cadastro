@@ -1,6 +1,6 @@
 # Sistema de Login e Cadastro
 
-Olá! Eu sou **Neil Lopes**, estudante de **Análise e Desenvolvimento de Sistemas**, tenho **16 anos**, e este é meu **segundo projeto pessoal**: um sistema de login e cadastro feito com **Node.js, Express, Handlebars, HTML e CSS**.
+Olá! Eu sou **Neil Lopes**, estudante de **Análise e Desenvolvimento de Sistemas**, tenho **17 anos**, e este é meu **segundo projeto pessoal**: um sistema de login e cadastro feito com **Node.js, Express, Handlebars, HTML e CSS**.
 
 ---
 
