@@ -1,0 +1,21 @@
+<div class="login-container">
+    {{#if error}}
+      <div class="error-msg">{{error}}</div>
+    {{/if}}
+
+    <h1>Cadastro</h1>
+
+    <form action="/cadastro" method="POST">
+        <input type="text" name="nome" placeholder="Nome" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="senha" placeholder="Senha" required minlength="6">
+        <button type="submit">Cadastrar</button>
+        <p>Já tem uma conta? <a href="/login">Login</a></p>
+    </form>
+</div>
+
+<footer class="footer">
+    <p>Desenvolvido por Neil Lopes | 
+       <a href="https://github.com/neildev7" target="_blank">GitHub</a>
+    </p>
+</footer>
