@@ -46,7 +46,8 @@ O sistema já possui **3 usuários iniciais cadastrados** para teste:
 
 ## Contato
 
-- GitHub: [neildev7](https://github.com/neildev7)  
+- GitHub: [neildev7](https://github.com/neildev7)
+- Linkedin: [Neil Lopes](https://www.linkedin.com/in/neil-lopes-4a33a5383)
 - E-mail: **neillopes237@gmail.com**
 - Instagram: **neilzsz**
 ---
