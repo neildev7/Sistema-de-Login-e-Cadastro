@@ -36,7 +36,7 @@ O sistema realiza:
 ## 📂 Estrutura do Projeto
 
 - `server.js` – Arquivo principal do servidor  
-- `db.js` ou `connection.js` – Conexão com o banco de dados MySQL  
+- `db.js`  – Conexão com o banco de dados MySQL  
 - `views/` – Templates Handlebars para páginas  
 - `public/` – Arquivos estáticos (CSS, imagens, scripts)  
 
@@ -62,5 +62,5 @@ O sistema realiza:
 
 ---
 
-> Este projeto foi desenvolvido como parte do meu aprendizado em desenvolvimento web, aplicando conceitos de automação, integração front-end e back-end, e contribuindo para a construção do meu portfólio profissional.
+> Este projeto foi desenvolvido como parte do meu aprendizado em desenvolvimento web, aplicando conceitos de banco de dados, integração front-end e back-end, e contribuindo para a construção do meu portfólio profissional.
 
