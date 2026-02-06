@@ -1,168 +1,186 @@
-// Importa o framework Express para criar o servidor
 const express = require("express");
-const app = express();
-
-// Utilizando bcrypt para hash de senhas
-const bcrypt = require('bcrypt');
-
-// Importa o Express-Handlebars para gerenciar templates
-const exphbs = require('express-handlebars');
-const hbs = exphbs.create({});
-
-// Importa o Body-Parser para processar dados enviados via POST
-const bodyParser = require('body-parser');
-
-// Importa o módulo de conexão com o banco de dados
+const bcrypt = require("bcrypt");
+const crypto = require("crypto");
+const exphbs = require("express-handlebars");
 const db = require("./db");
 
+const app = express();
+const hbs = exphbs.create({});
 
-// Variável para armazenar o usuário logado
-let usuarioLogado = null;
+const PORT = Number(process.env.PORT) || 8081;
+const SESSION_COOKIE_NAME = "sid";
+const SESSION_MAX_AGE_MS = 1000 * 60 * 60; // 1 hora
+const sessions = new Map();
 
-// Configura o uso de arquivos estáticos na pasta "public"
 app.use(express.static("public"));
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
-// Configura o Body-Parser para processar dados de formulários
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.engine("handlebars", hbs.engine);
+app.set("view engine", "handlebars");
 
-// Configura o Express-Handlebars como engine de templates
-app.engine('handlebars', hbs.engine);
-app.set('view engine', 'handlebars');
+const parseCookies = (req) => {
+  const header = req.headers.cookie;
+  if (!header) return {};
 
-// Rota principal ("/") que renderiza a página de login
+  return header.split(";").reduce((acc, cookie) => {
+    const [key, ...valueParts] = cookie.trim().split("=");
+    acc[key] = decodeURIComponent(valueParts.join("="));
+    return acc;
+  }, {});
+};
+
+const createSession = (email) => {
+  const sid = crypto.randomBytes(32).toString("hex");
+  sessions.set(sid, {
+    email,
+    expiresAt: Date.now() + SESSION_MAX_AGE_MS,
+  });
+  return sid;
+};
+
+const getSession = (sid) => {
+  if (!sid || !sessions.has(sid)) return null;
+  const session = sessions.get(sid);
+  if (Date.now() > session.expiresAt) {
+    sessions.delete(sid);
+    return null;
+  }
+  return session;
+};
+
+app.use((req, res, next) => {
+  const cookies = parseCookies(req);
+  const sid = cookies[SESSION_COOKIE_NAME];
+  const session = getSession(sid);
+
+  req.usuarioLogado = session?.email || null;
+  req.sid = sid;
+  next();
+});
+
+const requireAuth = (req, res, next) => {
+  if (!req.usuarioLogado) {
+    return res.redirect("/login");
+  }
+  return next();
+};
+
 app.get("/", (req, res) => {
-    res.render("login");
+  if (req.usuarioLogado) {
+    return res.redirect("/home");
+  }
+  return res.render("login");
 });
 
-// Rota para a página de login
 app.get("/login", (req, res) => {
-    res.render("login");
+  if (req.usuarioLogado) {
+    return res.redirect("/home");
+  }
+  return res.render("login");
 });
 
-// Rota para a página de cadastro
 app.get("/cadastro", (req, res) => {
-    res.render("cadastro");
+  if (req.usuarioLogado) {
+    return res.redirect("/home");
+  }
+  return res.render("cadastro");
 });
 
-// Rota para a página inicial (home), acessível apenas se o usuário estiver logado
-app.get("/home", async (req, res) => {
-    if (usuarioLogado) {
-        try {
-            // Busca o usuário logado no banco de dados pelo email
-            const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [usuarioLogado]);
-            if (rows.length > 0) {
-                // Renderiza a página inicial com o nome do usuário
-                res.render("home", { nome: rows[0].name });
-            } else {
-                // Redireciona para a página de login se o usuário não for encontrado
-                res.redirect("/login");
-            }
-        } catch (err) {
-            // Trata erros ao buscar o usuário no banco de dados
-            console.error("Erro ao buscar usuário:", err);
-            res.redirect("/login");
-        }
-    } else {
-        // Redireciona para a página de login se não houver usuário logado
-        res.redirect("/login");
+app.get("/home", requireAuth, async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [req.usuarioLogado]);
+
+    if (rows.length > 0) {
+      return res.render("home", { nome: rows[0].name });
     }
+
+    if (req.sid) {
+      sessions.delete(req.sid);
+    }
+    res.setHeader("Set-Cookie", `${SESSION_COOKIE_NAME}=; Path=/; HttpOnly; Max-Age=0; SameSite=Lax`);
+    return res.redirect("/login");
+  } catch (err) {
+    console.error("Erro ao buscar usuário:", err);
+    return res.redirect("/login");
+  }
 });
 
-
-// Rota para logout, que limpa o usuário logado e redireciona para o login
 app.get("/logout", (req, res) => {
-    usuarioLogado = null;
-    res.redirect("/login");
+  if (req.sid) {
+    sessions.delete(req.sid);
+  }
+  res.setHeader("Set-Cookie", `${SESSION_COOKIE_NAME}=; Path=/; HttpOnly; Max-Age=0; SameSite=Lax`);
+  return res.redirect("/login");
 });
 
-
-// Rota POST para cadastro de novos usuários no banco de dados
 app.post("/cadastro", async (req, res) => {
-    const { nome, email, senha } = req.body;
+  const { nome, email, senha } = req.body;
 
-    // Verifica se todos os campos foram preenchidos
-    if (!nome || !email || !senha) {
-        return res.render("cadastro", { error: "Por favor, preencha todos os campos." });
+  if (!nome || !email || !senha) {
+    return res.render("cadastro", { error: "Por favor, preencha todos os campos." });
+  }
+
+  try {
+    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+
+    if (rows.length > 0) {
+      return res.render("cadastro", { error: "Esse email já está cadastrado." });
     }
 
-    try {
-        // Verifica se já existe um usuário com o mesmo email no banco de dados
-        const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
-        if (rows.length > 0) {
-            return res.render("cadastro", { error: "Esse email já está cadastrado." });
-        }
-        
-        // Gera um hash para a senha do usuário
-        const saltRounds = 10;
-        const senhaHashed = await bcrypt.hash(senha, saltRounds);
-        
-        // Insere o novo usuário no banco de dados
-        await db.query(
-            "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-            [nome, email, senhaHashed]
-        );
+    const senhaHashed = await bcrypt.hash(senha, 10);
 
-        // Redireciona para a página de login após o cadastro
-        res.redirect("/login");
+    await db.query("INSERT INTO users (name, email, password) VALUES (?, ?, ?)", [
+      nome,
+      email,
+      senhaHashed,
+    ]);
 
-    } catch (err) {
-        // Trata erros durante o cadastro
-        console.error("Erro ao cadastrar usuário:", err);
-        res.render("cadastro", { error: "Erro interno ao cadastrar. Tente novamente." });
-    }
+    return res.redirect("/login");
+  } catch (err) {
+    console.error("Erro ao cadastrar usuário:", err);
+    return res.render("cadastro", { error: "Erro interno ao cadastrar. Tente novamente." });
+  }
 });
 
-// Rota POST para login de usuários
 app.post("/login", async (req, res) => {
-    const { email, senha } = req.body;
+  const { email, senha } = req.body;
 
-    // Verifica se todos os campos foram preenchidos
-    if (!email || !senha) {
-        return res.render("login", { error: "Por favor, preencha todos os campos." });
+  if (!email || !senha) {
+    return res.render("login", { error: "Por favor, preencha todos os campos." });
+  }
+
+  try {
+    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+
+    if (rows.length > 0) {
+      const usuario = rows[0];
+      const senhaValida = await bcrypt.compare(senha, usuario.password);
+
+      if (senhaValida) {
+        const sid = createSession(email);
+        res.setHeader(
+          "Set-Cookie",
+          `${SESSION_COOKIE_NAME}=${sid}; Path=/; HttpOnly; Max-Age=${SESSION_MAX_AGE_MS / 1000}; SameSite=Lax`
+        );
+        return res.redirect("/home");
+      }
     }
 
-    try {
-        // Busca o usuário pelo email no banco de dados
-        const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
-
-        if (rows.length > 0) {
-            const usuario = rows[0];
-
-            // Compara a senha enviada com o hash armazenado no banco de dados
-            const senhaValida = await bcrypt.compare(senha, usuario.password);
-
-            if (senhaValida) {
-                // Define o email do usuário logado e redireciona para a página inicial
-                usuarioLogado = email;
-                res.redirect("home");
-            } else {
-                // Retorna erro se a senha for inválida
-                res.render("login", { error: "Email ou senha inválidos" });
-            }
-        } else {
-            // Retorna erro se o email não for encontrado
-            res.render("login", { error: "Email ou senha inválidos" });
-        }
-    } catch (err) {
-        // Trata erros durante o login
-        console.error("Erro ao realizar login:", err);
-        res.render("login", { error: "Erro interno ao realizar login. Tente novamente." });
-    }
+    return res.render("login", { error: "Email ou senha inválidos" });
+  } catch (err) {
+    console.error("Erro ao realizar login:", err);
+    return res.render("login", { error: "Erro interno ao realizar login. Tente novamente." });
+  }
 });
 
-
-// Função autoexecutável para verificar a conexão com o banco de dados ao iniciar o servidor
 (async () => {
-    try {
-        // Testa a conexão com o banco de dados
-        const [rows] = await db.query("SELECT 1"); 
-        console.log("Conexão com o banco de dados estabelecida com sucesso.");
-    } catch (err) {
-        // Trata erros ao conectar ao banco de dados
-        console.error("Erro ao conectar ao banco de dados:", err);
-    }
+  try {
+    await db.query("SELECT 1");
+    console.log("Conexão com o banco de dados estabelecida com sucesso.");
+  } catch (err) {
+    console.error("Erro ao conectar ao banco de dados:", err);
+  }
 })();
 
-// Inicia o servidor na porta 8081
-app.listen(8081, () => console.log("Server is running on port 8081"));
+app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
