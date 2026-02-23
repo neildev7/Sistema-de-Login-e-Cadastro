@@ -1,0 +1,95 @@
+<div class="home-container">
+  <h1>Parabéns, {{nome}} 👋</h1>
+  <p>Você passou do login com sucesso!</p>
+
+  <button onclick="fazerLogout()" style="margin-bottom: 20px; cursor: pointer;">Sair da conta</button>
+
+  <hr>
+  <h3>Atualizar nome</h3>
+  <input type="text" id="novoNome" placeholder="Novo nome">
+  <button onclick="atualizarNome()">Atualizar</button>
+
+  <p id="msgNome"></p>
+
+  <hr>
+
+  <h3>Excluir conta</h3>
+  <button onclick="excluirConta()" style="color: red; cursor: pointer;">
+    Excluir minha conta
+  </button>
+</div>
+
+<footer class="footer">
+  <p>
+    Desenvolvido por Neil Lopes |
+    <a href="https://github.com/neildev7" target="_blank">GitHub</a>
+  </p>
+</footer>
+
+<script>
+  async function fazerLogout() {
+    try {
+
+      const response = await fetch("/logout", {
+        method: "DELETE"
+      });
+
+      if (response.ok) {
+        window.location.href = "/login";
+      } else {
+        alert("Erro ao tentar sair da conta.");
+      }
+    } catch (erro) {
+      console.error("Erro na requisição de logout:", erro);
+      alert("Erro de conexão ao tentar sair.");
+    }
+  }
+
+  async function atualizarNome() {
+    const novoNome = document.getElementById("novoNome").value;
+
+    if (!novoNome) {
+      document.getElementById("msgNome").innerText = "Digite um nome válido.";
+      return;
+    }
+
+    try {
+      const response = await fetch("/usuario/nome", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ novoNome })
+      });
+
+      const data = await response.json();
+      document.getElementById("msgNome").innerText = data.message;
+
+      setTimeout(() => location.reload(), 1000);
+    } catch (erro) {
+      console.error("Erro ao atualizar nome:", erro);
+      document.getElementById("msgNome").innerText = "Erro ao atualizar o nome.";
+    }
+  }
+
+  async function excluirConta() {
+    const confirmacao = confirm("Tem certeza que deseja excluir sua conta?");
+    if (!confirmacao) return;
+
+    try {
+      const response = await fetch("/usuario", {
+        method: "DELETE"
+      });
+
+      if (response.ok) {
+        alert("Conta excluída com sucesso!");
+        window.location.href = "/login";
+      } else {
+        alert("Erro ao excluir a conta.");
+      }
+    } catch (erro) {
+      console.error("Erro ao excluir conta:", erro);
+      alert("Erro de conexão ao tentar excluir a conta.");
+    }
+  }
+</script>

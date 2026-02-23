@@ -1,0 +1,172 @@
+<style>
+  .recovery-box {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fcfcfc;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  }
+  .recovery-box h3 {
+    margin-top: 0;
+    font-size: 1.2rem;
+    color: #333;
+  }
+  .recovery-box input {
+    width: 100%;
+    margin-bottom: 10px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .btn-primary {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    flex: 1;
+    font-weight: bold;
+  }
+  .btn-secondary {
+    background-color: #e0e0e0;
+    color: #333;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    flex: 1;
+    font-weight: bold;
+  }
+  .btn-primary:hover { background-color: #0056b3; }
+  .btn-secondary:hover { background-color: #ccc; }
+  .recovery-desc { font-size: 0.9em; color: #666; margin-bottom: 15px; }
+</style>
+
+<div class="login-container">
+  {{#if error}}
+    <div class="error-msg">{{error}}</div>
+  {{/if}}
+
+  <h1>Login</h1>
+
+  <form action="/login" method="POST" autocomplete="off">
+    <input type="email" name="email" placeholder="Email" required autocomplete="new-password">
+    <input type="password" name="senha" placeholder="Senha" required autocomplete="new-password">
+    <button type="submit">Login</button>
+  </form>
+
+  <p>
+    <a href="#" onclick="mostrarRecuperacao(event)">Esqueci minha senha</a>
+  </p>
+
+  <div id="recuperacao" class="recovery-box" style="display: none;">
+    <h3>Recuperar senha</h3>
+    <p class="recovery-desc">Informe seu e-mail e escolha uma nova senha de acesso.</p>
+
+    <input type="email" id="emailRec" placeholder="Seu Email" required>
+    <input type="password" id="novaSenha" placeholder="Nova senha" required>
+    <input type="password" id="confirmarSenha" placeholder="Confirmar nova senha" required>
+
+    <div class="action-buttons">
+      <button type="button" class="btn-primary" onclick="recuperarSenha()">Salvar Senha</button>
+      <button type="button" class="btn-secondary" onclick="esconderRecuperacao()">Cancelar</button>
+    </div>
+    
+    <p id="msgRec" style="margin-top: 15px; font-weight: bold; font-size: 0.9em; text-align: center;"></p>
+  </div>
+
+  <p style="margin-top: 20px;">Não tem uma conta? <a href="/cadastro">Cadastrar</a></p>
+</div>
+
+<footer class="footer">
+  <p>
+    Desenvolvido por Neil Lopes |
+    <a href="https://github.com/neildev7" target="_blank">GitHub</a>
+  </p>
+</footer>
+
+<script>
+  function mostrarRecuperacao(event) {
+    if (event) event.preventDefault(); 
+    document.getElementById("recuperacao").style.display = "block";
+  }
+
+
+  function esconderRecuperacao() {
+    document.getElementById("recuperacao").style.display = "none";
+    document.getElementById("msgRec").innerText = "";
+    document.getElementById("emailRec").value = "";
+    document.getElementById("novaSenha").value = "";
+    document.getElementById("confirmarSenha").value = "";
+  }
+
+  async function recuperarSenha() {
+    const email = document.getElementById("emailRec").value;
+    const novaSenha = document.getElementById("novaSenha").value;
+    const confirmarSenha = document.getElementById("confirmarSenha").value;
+    const msg = document.getElementById("msgRec");
+
+    msg.style.color = "black";
+
+    if (!email || !novaSenha || !confirmarSenha) {
+      msg.innerText = "Preencha todos os campos.";
+      msg.style.color = "#d9534f"; 
+      return;
+    }
+
+    if (novaSenha !== confirmarSenha) {
+      msg.innerText = "As senhas não coincidem.";
+      msg.style.color = "#d9534f";
+      return;
+    }
+
+    msg.innerText = "Processando..."; 
+
+    try {
+      const deleteResponse = await fetch(`/recuperar-senha?email=${encodeURIComponent(email)}`, {
+        method: "DELETE"
+      });
+
+      if (!deleteResponse.ok) {
+         const erroData = await deleteResponse.json().catch(() => ({}));
+         msg.innerText = erroData.message || "Erro ao invalidar a senha antiga.";
+         msg.style.color = "#d9534f";
+         return; 
+      }
+
+      const putResponse = await fetch(`/recuperar-senha?email=${encodeURIComponent(email)}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ novaSenha })
+      });
+
+      const data = await putResponse.json();
+
+      if (!putResponse.ok) {
+         msg.innerText = data.message || "Erro ao salvar a nova senha.";
+         msg.style.color = "#d9534f";
+         return;
+      }
+
+      msg.innerText = data.message;
+      msg.style.color = "#28a745"; 
+      
+      setTimeout(() => {
+        esconderRecuperacao();
+      }, 3000);
+      
+    } catch (erro) {
+      console.error("Erro na requisição:", erro);
+      msg.innerText = "Erro ao tentar alterar a senha. Tente novamente mais tarde.";
+      msg.style.color = "#d9534f";
+    }
+  }
+</script>
