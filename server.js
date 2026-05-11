@@ -218,7 +218,11 @@ const passwordRecoveryLimiter = rateLimit({
 
 const requireAuth = (req, res, next) => {
   if (!req.usuarioLogado) {
-    return res.redirect("/login");
+    if (req.method === "GET") {
+      return renderLogin(res, { error: "Faça login para acessar esta página." }, 401);
+    }
+
+    return res.status(401).json({ message: "Autenticação necessária." });
   }
   return next();
 };
