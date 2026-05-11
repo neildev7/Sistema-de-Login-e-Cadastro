@@ -138,6 +138,7 @@ const requireCsrf = (req, res, next) => {
   const submittedToken = req.body?._csrf || req.headers["x-csrf-token"];
   if (!submittedToken || !safeCompare(submittedToken, req.csrfToken)) {
     return res.status(403).json({ status: 403, message: "Token CSRF inválido ou ausente." });
+    return res.status(403).json({ message: "Token CSRF inválido ou ausente." });
   }
 
   return next();
@@ -159,6 +160,7 @@ const rateLimit = ({ windowMs, max, message }) => (req, res, next) => {
     const retryAfter = Math.ceil((current.resetAt - now) / 1000);
     res.setHeader("Retry-After", String(retryAfter));
     return res.status(429).json({ status: 429, message });
+    return res.status(429).json({ message });
   }
 
   return next();
@@ -223,6 +225,7 @@ const requireAuth = (req, res, next) => {
     }
 
     return res.status(401).json({ status: 401, message: "Autenticação necessária." });
+    return res.status(401).json({ message: "Autenticação necessária." });
   }
   return next();
 };
@@ -230,6 +233,8 @@ const requireAuth = (req, res, next) => {
 const renderLogin = (res, data = {}, statusCode = 200) => res.status(statusCode).render("login", {
   ...data,
   statusCode: statusCode >= 400 ? statusCode : null,
+const renderLogin = (res, data = {}) => res.render("login", {
+  ...data,
   minPasswordLength: MIN_PASSWORD_LENGTH,
   maxPasswordLength: MAX_PASSWORD_LENGTH,
 });
@@ -237,6 +242,8 @@ const renderLogin = (res, data = {}, statusCode = 200) => res.status(statusCode)
 const renderCadastro = (res, data = {}, statusCode = 200) => res.status(statusCode).render("cadastro", {
   ...data,
   statusCode: statusCode >= 400 ? statusCode : null,
+const renderCadastro = (res, data = {}) => res.render("cadastro", {
+  ...data,
   minPasswordLength: MIN_PASSWORD_LENGTH,
   maxPasswordLength: MAX_PASSWORD_LENGTH,
   maxNameLength: MAX_NAME_LENGTH,
@@ -309,6 +316,19 @@ app.post("/cadastro", async (req, res) => {
 
   if (!isValidPassword(senha)) {
     return renderCadastro(res, { error: validatePasswordMessage, nome, email }, 400);
+    return renderCadastro(res, { error: "Por favor, preencha todos os campos.", nome, email });
+  }
+
+  if (nome.length > MAX_NAME_LENGTH) {
+    return renderCadastro(res, { error: `O nome deve ter no máximo ${MAX_NAME_LENGTH} caracteres.`, nome, email });
+  }
+
+  if (!isValidEmail(email)) {
+    return renderCadastro(res, { error: "Informe um e-mail válido.", nome, email });
+  }
+
+  if (!isValidPassword(senha)) {
+    return renderCadastro(res, { error: validatePasswordMessage, nome, email });
   }
 
   try {
@@ -343,6 +363,11 @@ app.post("/login", loginLimiter, async (req, res) => {
 
   if (!isValidEmail(email)) {
     return renderLogin(res, { error: "Email ou senha inválidos", email }, 401);
+    return renderLogin(res, { error: "Por favor, preencha todos os campos.", email });
+  }
+
+  if (!isValidEmail(email)) {
+    return renderLogin(res, { error: "Email ou senha inválidos", email });
   }
 
   try {
@@ -364,6 +389,7 @@ app.post("/login", loginLimiter, async (req, res) => {
     }
 
     return renderLogin(res, { error: "Email ou senha inválidos", email }, 401);
+    return renderLogin(res, { error: "Email ou senha inválidos", email });
   } catch (err) {
     console.error("Erro ao realizar login:", err);
     return renderLogin(res, { error: "Erro interno ao realizar login. Tente novamente.", email });
@@ -375,6 +401,7 @@ app.put("/usuario/nome", requireAuth, async (req, res) => {
 
   if (!novoNome || novoNome.length > MAX_NAME_LENGTH) {
     return res.status(400).json({ status: 400, message: `Informe um nome com até ${MAX_NAME_LENGTH} caracteres.` });
+    return res.status(400).json({ message: `Informe um nome com até ${MAX_NAME_LENGTH} caracteres.` });
   }
 
   try {
@@ -399,6 +426,7 @@ app.put("/usuario/senha", requireAuth, async (req, res) => {
 
   if (!isValidPassword(novaSenha)) {
     return res.status(400).json({ status: 400, message: validatePasswordMessage });
+    return res.status(400).json({ message: validatePasswordMessage });
   }
 
   try {
@@ -425,6 +453,7 @@ app.post("/recuperar-senha", passwordRecoveryLimiter, async (req, res) => {
 
   if (!isValidEmail(email)) {
     return res.status(400).json({ status: 400, message: "Informe um e-mail válido." });
+    return res.status(400).json({ message: "Informe um e-mail válido." });
   }
 
   try {
@@ -454,6 +483,7 @@ app.post("/recuperar-senha", passwordRecoveryLimiter, async (req, res) => {
   } catch (err) {
     console.error("Erro ao solicitar recuperação de senha:", err);
     return res.status(500).json({ status: 500, message: "Erro interno ao solicitar recuperação de senha." });
+    return res.status(500).json({ message: "Erro interno ao solicitar recuperação de senha." });
   }
 });
 
@@ -464,23 +494,27 @@ app.put("/recuperar-senha", passwordRecoveryLimiter, async (req, res) => {
 
   if (!isValidEmail(email) || !token || !isValidPassword(novaSenha)) {
     return res.status(400).json({ status: 400, message: "Dados inválidos para recuperação de senha." });
+    return res.status(400).json({ message: "Dados inválidos para recuperação de senha." });
   }
 
   const tokenData = passwordResetTokens.get(email);
   if (!tokenData || tokenData.expiresAt < Date.now()) {
     passwordResetTokens.delete(email);
     return res.status(403).json({ status: 403, message: "Token inválido ou expirado." });
+    return res.status(400).json({ message: "Token inválido ou expirado." });
   }
 
   tokenData.attempts += 1;
   if (tokenData.attempts > 5) {
     passwordResetTokens.delete(email);
     return res.status(429).json({ status: 429, message: "Muitas tentativas com token inválido. Solicite um novo token." });
+    return res.status(429).json({ message: "Muitas tentativas com token inválido. Solicite um novo token." });
   }
 
   const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
   if (!safeCompare(tokenHash, tokenData.tokenHash)) {
     return res.status(403).json({ status: 403, message: "Token inválido ou expirado." });
+    return res.status(400).json({ message: "Token inválido ou expirado." });
   }
 
   try {
@@ -541,3 +575,4 @@ app.use((req, res) => {
 })();
 
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+app.listen(PORT, () => console.log(`O servidor está rodando na porta: ${PORT}`));

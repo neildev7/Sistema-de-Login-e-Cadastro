@@ -77,6 +77,7 @@ const setupLoginPage = () => {
 
       if (!response.ok) {
         setMessage("msgRec", formatErrorMessage(response, data, "Erro ao solicitar token."), "error");
+        setMessage("msgRec", data.message || "Erro ao solicitar token.", "error");
         return;
       }
 
@@ -118,6 +119,7 @@ const setupLoginPage = () => {
 
       if (!response.ok) {
         setMessage("msgRec", formatErrorMessage(response, data, "Erro ao salvar a nova senha."), "error");
+        setMessage("msgRec", data.message || "Erro ao salvar a nova senha.", "error");
         return;
       }
 
@@ -164,6 +166,7 @@ const setupHomePage = () => {
       });
 
       setMessage("msgNome", response.ok ? (data.message || "Solicitação concluída.") : formatErrorMessage(response, data, "Erro ao atualizar nome."), response.ok ? "success" : "error");
+      setMessage("msgNome", data.message || "Solicitação concluída.", response.ok ? "success" : "error");
 
       if (response.ok) setTimeout(() => location.reload(), 1000);
     } catch (erro) {
@@ -187,6 +190,7 @@ const setupHomePage = () => {
       });
 
       setMessage("msgSenha", response.ok ? (data.message || "Solicitação concluída.") : formatErrorMessage(response, data, "Erro ao atualizar senha."), response.ok ? "success" : "error");
+      setMessage("msgSenha", data.message || "Solicitação concluída.", response.ok ? "success" : "error");
     } catch (erro) {
       console.error("Erro ao atualizar senha:", erro);
       setMessage("msgSenha", "Erro ao atualizar a senha.", "error");
