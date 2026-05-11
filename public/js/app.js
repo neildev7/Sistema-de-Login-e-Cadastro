@@ -14,6 +14,17 @@ const requestJson = async (url, options = {}) => {
   return { response, data };
 };
 
+const formatErrorMessage = (response, data, fallback) => {
+  const status = data?.status || response?.status;
+  const message = data?.message || fallback;
+
+  if (!response?.ok && status) {
+    return `Erro ${status}: ${message}`;
+  }
+
+  return message;
+};
+
 const setMessage = (elementId, message, type = "info") => {
   const element = document.getElementById(elementId);
   if (!element) return;
@@ -65,6 +76,7 @@ const setupLoginPage = () => {
       });
 
       if (!response.ok) {
+        setMessage("msgRec", formatErrorMessage(response, data, "Erro ao solicitar token."), "error");
         setMessage("msgRec", data.message || "Erro ao solicitar token.", "error");
         return;
       }
@@ -106,6 +118,7 @@ const setupLoginPage = () => {
       });
 
       if (!response.ok) {
+        setMessage("msgRec", formatErrorMessage(response, data, "Erro ao salvar a nova senha."), "error");
         setMessage("msgRec", data.message || "Erro ao salvar a nova senha.", "error");
         return;
       }
@@ -152,6 +165,7 @@ const setupHomePage = () => {
         body: JSON.stringify({ novoNome }),
       });
 
+      setMessage("msgNome", response.ok ? (data.message || "Solicitação concluída.") : formatErrorMessage(response, data, "Erro ao atualizar nome."), response.ok ? "success" : "error");
       setMessage("msgNome", data.message || "Solicitação concluída.", response.ok ? "success" : "error");
 
       if (response.ok) setTimeout(() => location.reload(), 1000);
@@ -175,6 +189,7 @@ const setupHomePage = () => {
         body: JSON.stringify({ novaSenha }),
       });
 
+      setMessage("msgSenha", response.ok ? (data.message || "Solicitação concluída.") : formatErrorMessage(response, data, "Erro ao atualizar senha."), response.ok ? "success" : "error");
       setMessage("msgSenha", data.message || "Solicitação concluída.", response.ok ? "success" : "error");
     } catch (erro) {
       console.error("Erro ao atualizar senha:", erro);

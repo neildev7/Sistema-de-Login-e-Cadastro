@@ -1,6 +1,8 @@
 <div class="cadastro-container">
     {{#if error}}
-      <div class="error-msg">{{error}}</div>
+      <div class="error-msg">
+        {{#if statusCode}}<strong>Erro {{statusCode}}:</strong> {{/if}}{{error}}
+      </div>
     {{/if}}
 
     <h1>Cadastro</h1>
