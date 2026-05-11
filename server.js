@@ -227,13 +227,13 @@ const requireAuth = (req, res, next) => {
   return next();
 };
 
-const renderLogin = (res, data = {}, statusCode = 200) => res.status(statusCode).render("login", {
+const renderLogin = (res, data = {}) => res.render("login", {
   ...data,
   minPasswordLength: MIN_PASSWORD_LENGTH,
   maxPasswordLength: MAX_PASSWORD_LENGTH,
 });
 
-const renderCadastro = (res, data = {}, statusCode = 200) => res.status(statusCode).render("cadastro", {
+const renderCadastro = (res, data = {}) => res.render("cadastro", {
   ...data,
   minPasswordLength: MIN_PASSWORD_LENGTH,
   maxPasswordLength: MAX_PASSWORD_LENGTH,
@@ -294,19 +294,19 @@ app.post("/cadastro", async (req, res) => {
   const { senha } = req.body;
 
   if (!nome || !email || !senha) {
-    return renderCadastro(res, { error: "Por favor, preencha todos os campos.", nome, email }, 400);
+    return renderCadastro(res, { error: "Por favor, preencha todos os campos.", nome, email });
   }
 
   if (nome.length > MAX_NAME_LENGTH) {
-    return renderCadastro(res, { error: `O nome deve ter no máximo ${MAX_NAME_LENGTH} caracteres.`, nome, email }, 400);
+    return renderCadastro(res, { error: `O nome deve ter no máximo ${MAX_NAME_LENGTH} caracteres.`, nome, email });
   }
 
   if (!isValidEmail(email)) {
-    return renderCadastro(res, { error: "Informe um e-mail válido.", nome, email }, 400);
+    return renderCadastro(res, { error: "Informe um e-mail válido.", nome, email });
   }
 
   if (!isValidPassword(senha)) {
-    return renderCadastro(res, { error: validatePasswordMessage, nome, email }, 400);
+    return renderCadastro(res, { error: validatePasswordMessage, nome, email });
   }
 
   try {
@@ -336,11 +336,11 @@ app.post("/login", loginLimiter, async (req, res) => {
   const { senha } = req.body;
 
   if (!email || !senha) {
-    return renderLogin(res, { error: "Por favor, preencha todos os campos.", email }, 400);
+    return renderLogin(res, { error: "Por favor, preencha todos os campos.", email });
   }
 
   if (!isValidEmail(email)) {
-    return renderLogin(res, { error: "Email ou senha inválidos", email }, 401);
+    return renderLogin(res, { error: "Email ou senha inválidos", email });
   }
 
   try {
@@ -361,7 +361,7 @@ app.post("/login", loginLimiter, async (req, res) => {
       }
     }
 
-    return renderLogin(res, { error: "Email ou senha inválidos", email }, 401);
+    return renderLogin(res, { error: "Email ou senha inválidos", email });
   } catch (err) {
     console.error("Erro ao realizar login:", err);
     return renderLogin(res, { error: "Erro interno ao realizar login. Tente novamente.", email });
@@ -467,7 +467,7 @@ app.put("/recuperar-senha", passwordRecoveryLimiter, async (req, res) => {
   const tokenData = passwordResetTokens.get(email);
   if (!tokenData || tokenData.expiresAt < Date.now()) {
     passwordResetTokens.delete(email);
-    return res.status(403).json({ message: "Token inválido ou expirado." });
+    return res.status(400).json({ message: "Token inválido ou expirado." });
   }
 
   tokenData.attempts += 1;
@@ -478,7 +478,7 @@ app.put("/recuperar-senha", passwordRecoveryLimiter, async (req, res) => {
 
   const tokenHash = crypto.createHash("sha256").update(token).digest("hex");
   if (!safeCompare(tokenHash, tokenData.tokenHash)) {
-    return res.status(403).json({ message: "Token inválido ou expirado." });
+    return res.status(400).json({ message: "Token inválido ou expirado." });
   }
 
   try {
@@ -538,4 +538,4 @@ app.use((req, res) => {
   }
 })();
 
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+app.listen(PORT, () => console.log(`O servidor está rodando na porta: ${PORT}`));

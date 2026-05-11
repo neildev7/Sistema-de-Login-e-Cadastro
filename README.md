@@ -82,7 +82,6 @@ Sistema web de **cadastro e login de usuários** com **Node.js, Express, Handleb
 - A recuperação de senha gera um token temporário de 15 minutos. Em desenvolvimento, o token também aparece na resposta para facilitar testes; em produção, ele deve ser enviado por e-mail ou outro canal seguro.
 - As senhas devem ter entre 8 e 72 caracteres.
 - As rotas sensíveis usam token CSRF no corpo do formulário ou no header `X-CSRF-Token`.
-- Falhas de autenticação retornam HTTP `401`; falhas de permissão/CSRF/token inválido retornam HTTP `403`.
 
 ## 📜 Scripts
 
