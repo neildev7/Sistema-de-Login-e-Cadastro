@@ -534,4 +534,4 @@ app.use((req, res) => {
   }
 })();
 
-app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+app.listen(PORT, () => console.log(`O servidor está rodando na porta: ${PORT}`));
