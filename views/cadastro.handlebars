@@ -1,14 +1,17 @@
 <div class="cadastro-container">
     {{#if error}}
-      <div class="error-msg">{{error}}</div>
+      <div class="error-msg">
+        {{#if statusCode}}<strong>Erro {{statusCode}}:</strong> {{/if}}{{error}}
+      </div>
     {{/if}}
 
     <h1>Cadastro</h1>
 
-    <form action="/cadastro" method="POST">
-        <input type="text" name="nome" placeholder="Nome" required>
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="password" name="senha" placeholder="Senha" required minlength="6">
+    <form action="/cadastro" method="POST" autocomplete="off">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
+        <input type="text" name="nome" placeholder="Nome" value="{{nome}}" required maxlength="{{maxNameLength}}">
+        <input type="email" name="email" placeholder="Email" value="{{email}}" required autocomplete="email">
+        <input type="password" name="senha" placeholder="Senha" required minlength="{{minPasswordLength}}" maxlength="{{maxPasswordLength}}" autocomplete="new-password">
         <button type="submit">Cadastrar</button>
         <p>Já tem uma conta? <a href="/login">Login</a></p>
     </form>
@@ -16,6 +19,6 @@
 
 <footer class="footer">
     <p>Desenvolvido por Neil Lopes | 
-       <a href="https://github.com/neildev7" target="_blank">GitHub</a>
+       <a href="https://github.com/neildev7" target="_blank" rel="noopener noreferrer">GitHub</a>
     </p>
 </footer>
