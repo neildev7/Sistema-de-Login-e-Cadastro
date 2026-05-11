@@ -4,11 +4,15 @@ Sistema web de **cadastro e login de usuários** com **Node.js, Express, Handleb
 
 ## 📌 Funcionalidades
 
-- 📝 Cadastro de usuários com validação de campos obrigatórios
+- 📝 Cadastro de usuários com validação de campos obrigatórios, tamanho de nome, e-mail e senha
 - 🔒 Login com senha criptografada em **bcrypt**
-- 🍪 Sessão por navegador usando cookie `HttpOnly`
+- 🍪 Sessão por navegador usando cookie `HttpOnly`, `SameSite=Lax` e `Secure` em produção
+- 🛡️ Headers de segurança configurados diretamente no Express
+- 🧾 Proteção CSRF para rotas `POST`, `PUT`, `PATCH` e `DELETE`
+- 🚦 Limite de tentativas para login e recuperação de senha
+- 🔑 Recuperação de senha com token temporário, expiração e limite de tentativas
 - 🏠 Página inicial personalizada após autenticação
-- 🚪 Logout com encerramento de sessão
+- 👤 Alteração de nome, alteração de senha, exclusão de conta e logout
 
 ## 🚀 Tecnologias
 
@@ -21,22 +25,31 @@ Sistema web de **cadastro e login de usuários** com **Node.js, Express, Handleb
 
 ## 📂 Estrutura
 
-- `server.js` – servidor HTTP e rotas
+- `server.js` – servidor HTTP, rotas, autenticação, headers de segurança, CSRF e rate limit
 - `db.js` – conexão com banco de dados via pool MySQL
 - `db.sql` – script de criação do banco e tabela
+- `.env.example` – exemplo de variáveis de ambiente necessárias
 - `views/` – páginas Handlebars
-- `public/` – arquivos estáticos (CSS)
+- `public/css/` – estilos da aplicação
+- `public/js/` – JavaScript do frontend
 
 ## ▶️ Como usar
 
-1. Clone o projeto
+1. Clone o projeto.
+
 2. Instale dependências:
 
    ```bash
    npm install
    ```
 
-3. Crie o arquivo `.env`:
+3. Crie o arquivo `.env` a partir do exemplo:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+4. Ajuste as credenciais no arquivo `.env`:
 
    ```env
    DB_HOST=localhost
@@ -44,11 +57,12 @@ Sistema web de **cadastro e login de usuários** com **Node.js, Express, Handleb
    DB_PASSWORD=sua_senha
    DB_NAME=usuarioslogin
    PORT=8081
+   NODE_ENV=development
    ```
 
-4. Crie banco/tabela executando o arquivo `db.sql` no MySQL.
+5. Crie banco/tabela executando o arquivo `db.sql` no MySQL.
 
-5. Rode em desenvolvimento:
+6. Rode em desenvolvimento:
 
    ```bash
    npm run dev
@@ -60,7 +74,15 @@ Sistema web de **cadastro e login de usuários** com **Node.js, Express, Handleb
    npm start
    ```
 
-6. Abra `http://localhost:8081`.
+7. Abra `http://localhost:8081`.
+
+## 🔐 Observações de segurança
+
+- Em produção, use HTTPS e defina `NODE_ENV=production` para habilitar o atributo `Secure` nos cookies e o header `Strict-Transport-Security`.
+- A recuperação de senha gera um token temporário de 15 minutos. Em desenvolvimento, o token também aparece na resposta para facilitar testes; em produção, ele deve ser enviado por e-mail ou outro canal seguro.
+- As senhas devem ter entre 8 e 72 caracteres.
+- As rotas sensíveis usam token CSRF no corpo do formulário ou no header `X-CSRF-Token`.
+- Falhas de autenticação retornam HTTP `401`; falhas de permissão/CSRF/token inválido retornam HTTP `403`. Quando a página é renderizada novamente, o código aparece junto da mensagem de erro.
 
 ## 📜 Scripts
 
