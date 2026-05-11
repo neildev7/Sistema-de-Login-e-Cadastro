@@ -1,34 +1,96 @@
-<div class="home-container" data-page="home">
-  <h1>Parabéns, {{nome}} 👋</h1>
-  <p>Você passou do login com sucesso!</p>
+<div class="valorant-dashboard" data-page="home">
+    
+    <header class="dashboard-header">
+        <div>
+            <p>Acesso Autorizado</p>
+            <h1>BEM-VINDO, <span>{{nome}}</span></h1>
+        </div>
+        <button id="logoutBtn" class="btn-secondary">Sair da conta</button>
+    </header>
 
-  <button id="logoutBtn" class="space-bottom">Sair da conta</button>
+    <!-- SEÇÃO: Seleção de Agentes -->
+    <section class="agent-selection">
+        <h2 class="section-title">Defina seu Agente</h2>
+        
+        <div class="agent-grid">
+            <!-- ATENÇÃO AQUI: Note o data-agent="" em cada um! -->
+            <div class="agent-card" data-agent="jett">
+                <img src="/img/jett.png" alt="Jett">
+                <span>JETT</span>
+            </div>
+            <div class="agent-card" data-agent="reyna">
+                <img src="/img/reyna.png" alt="Reyna">
+                <span>REYNA</span>
+            </div>
+            <div class="agent-card" data-agent="phoenix">
+                <img src="/img/phoniex.png" alt="Phoenix">
+                <span>PHOENIX</span>
+            </div>
+            <div class="agent-card" data-agent="omen">
+                <img src="/img/omen.png" alt="Omen">
+                <span>OMEN</span>
+            </div>
+            <div class="agent-card" data-agent="sage">
+                <img src="/img/sage.png" alt="Sage">
+                <span>SAGE</span>
+            </div>
+            <div class="agent-card" data-agent="sova">
+                <img src="/img/sova.png" alt="Sova">
+                <span>SOVA</span>
+            </div>
+        </div>
 
-  <hr>
-  <h3>Atualizar nome</h3>
-  <input type="text" id="novoNome" placeholder="Novo nome" maxlength="80">
-  <button id="atualizarNomeBtn">Atualizar</button>
+        <!-- PAINEL DE INFORMAÇÕES (Fica invisível até clicar em alguém) -->
+        <div id="agentInfoPanel" class="agent-info-panel" style="display: none;">
+            <div class="agent-info-header">
+                <h3 id="infoName">NOME</h3>
+                <span id="infoRole" class="agent-role">Função</span>
+            </div>
+            <p id="infoDescription" class="agent-description">Descrição</p>
+            
+            <h4 class="abilities-title">Habilidades</h4>
+            <ul id="infoAbilities" class="agent-abilities">
+                <!-- Habilidades entram aqui automaticamente -->
+            </ul>
+        </div>
+    </section>
 
-  <p id="msgNome"></p>
+    <!-- Configurações -->
+    <section class="settings-panel">
+        <div class="setting-card">
+            <h3>Atualizar Identificação</h3>
+            <div class="input-row">
+                <input type="text" id="novoNome" placeholder="Novo nome" maxlength="80">
+                <button id="atualizarNomeBtn" class="btn-primary">Atualizar</button>
+            </div>
+            <p id="msgNome" class="msg-feedback"></p>
+        </div>
 
-  <hr>
+        <div class="setting-card">
+            <h3>Credenciais de Acesso</h3>
+            <div class="input-row">
+                <input type="password" id="novaSenhaUsuario" placeholder="Nova senha" minlength="8" maxlength="72" autocomplete="new-password">
+                <button id="atualizarSenhaBtn" class="btn-primary">Alterar</button>
+            </div>
+            <p id="msgSenha" class="msg-feedback"></p>
+        </div>
 
-  <h3>Alterar senha</h3>
-  <input type="password" id="novaSenhaUsuario" placeholder="Nova senha" minlength="8" maxlength="72" autocomplete="new-password">
-  <button id="atualizarSenhaBtn">Alterar senha</button>
-  <p id="msgSenha"></p>
+        <div class="danger-zone">
+            <h3>Zona de Risco</h3>
+            <p>A exclusão da conta é permanente e removerá seu acesso ao painel.</p>
+            <button id="excluirContaBtn" class="btn-danger">Excluir minha conta</button>
+        </div>
+    </section>
 
-  <hr>
-
-  <h3>Excluir conta</h3>
-  <button id="excluirContaBtn" class="danger-button">
-    Excluir minha conta
-  </button>
 </div>
 
 <footer class="footer">
-  <p>
-    Desenvolvido por Neil Lopes |
-    <a href="https://github.com/neildev7" target="_blank" rel="noopener noreferrer">GitHub</a>
-  </p>
+    <p>
+        Desenvolvido por Neil Lopes |
+        <a href="https://github.com/neildev7" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </p>
 </footer>
+
+<!-- SCRIPT DE FUNCIONAMENTO (Deve ficar no final do arquivo!) -->
+<script src="/js/home.js"></script>
+  

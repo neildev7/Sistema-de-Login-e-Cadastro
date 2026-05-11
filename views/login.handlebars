@@ -1,48 +1,35 @@
-<div class="login-container" data-page="login">
-  {{#if error}}
-    <div class="error-msg">
-      {{#if statusCode}}<strong>Erro {{statusCode}}:</strong> {{/if}}{{error}}
-    </div>
-  {{/if}}
+<div class="login-container">
+    {{#if error}}
+      <div class="error-msg">
+        {{#if statusCode}}<strong>Erro {{statusCode}}:</strong> {{/if}}{{error}}
+      </div>
+    {{/if}}
 
-  <h1>Login</h1>
+    <h1>Login</h1>
 
-  <form action="/login" method="POST" autocomplete="off">
-    <input type="hidden" name="_csrf" value="{{csrfToken}}">
-    <input type="email" name="email" placeholder="Email" value="{{email}}" required autocomplete="email">
-    <input type="password" name="senha" placeholder="Senha" required minlength="{{minPasswordLength}}" maxlength="{{maxPasswordLength}}" autocomplete="current-password">
-    <button type="submit">Login</button>
-  </form>
+    <form action="/login" method="POST" autocomplete="off">
+        <input type="hidden" name="_csrf" value="{{csrfToken}}">
 
-  <p>
-    <a href="#" id="mostrarRecuperacao">Esqueci minha senha</a>
-  </p>
+        <div class="input-group">
+            <input type="email" name="email" placeholder="Email" value="{{email}}" required autocomplete="email">
+        </div>
 
-  <div id="recuperacao" class="recovery-box hidden">
-    <h3>Recuperar senha</h3>
-    <p class="recovery-desc">Informe seu e-mail para gerar um token temporário. Depois, use esse token para cadastrar uma nova senha.</p>
+        <div class="input-group">
+            <input type="password" name="senha" placeholder="Senha" required minlength="{{minPasswordLength}}" maxlength="{{maxPasswordLength}}" autocomplete="current-password">
+        </div>
 
-    <input type="email" id="emailRec" placeholder="Seu Email" required autocomplete="email">
-    <button type="button" class="btn-primary" id="solicitarToken">Solicitar token</button>
-
-    <input type="text" id="tokenRec" placeholder="Token recebido" required autocomplete="one-time-code">
-    <input type="password" id="novaSenha" placeholder="Nova senha" required minlength="{{minPasswordLength}}" maxlength="{{maxPasswordLength}}" autocomplete="new-password">
-    <input type="password" id="confirmarSenha" placeholder="Confirmar nova senha" required minlength="{{minPasswordLength}}" maxlength="{{maxPasswordLength}}" autocomplete="new-password">
-
-    <div class="action-buttons">
-      <button type="button" class="btn-primary" id="salvarSenha">Salvar senha</button>
-      <button type="button" class="btn-secondary" id="cancelarRecuperacao">Cancelar</button>
-    </div>
-
-    <p id="msgRec" class="recovery-message"></p>
-  </div>
-
-  <p class="top-space">Não tem uma conta? <a href="/cadastro">Cadastrar</a></p>
+        <button type="submit">Entrar</button>
+        
+        <div class="links">
+            <p>Não tem uma conta? <a href="/cadastro">Cadastrar-se</a></p>
+            <!-- Deixei o link de recuperar senha aqui caso você já tenha uma tela para isso -->
+            <!-- <p><a href="/recuperar-senha">Esqueci minha senha</a></p> -->
+        </div>
+    </form>
 </div>
 
 <footer class="footer">
-  <p>
-    Desenvolvido por Neil Lopes |
-    <a href="https://github.com/neildev7" target="_blank" rel="noopener noreferrer">GitHub</a>
-  </p>
+    <p>Desenvolvido por Neil Lopes | 
+       <a href="https://github.com/neildev7" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </p>
 </footer>

@@ -1,281 +1,501 @@
-/* Reset básico e fontes */
+/* =========================================
+   FONTES GLOBAIS (ESTILO VALORANT)
+========================================= */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Oswald:wght@500;700&display=swap');
+
+/* =========================================
+   RESETS E BASE
+========================================= */
 * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 body {
-    background-color: #2f3136; /* fundo escuro tipo Discord */
+    background-color: #0f1923; /* Azul escuro acinzentado do Valorant */
+    color: #ece8e1; /* Branco/Bege claro */
+    font-family: 'Montserrat', sans-serif;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    justify-content: center; /* Centraliza verticalmente o login/cadastro */
     min-height: 100vh;
-    color: #fff;
+    background-image: radial-gradient(circle at center, #172533 0%, #0f1923 100%);
+    padding: 20px;
 }
 
-/* Containers gerais */
-.login-container,
-.home-container,
-.cadastro-container {
-    background-color: #36393f;
-    padding: 2.5rem 3rem;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-    width: 360px;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
-/* Títulos */
-h1 {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
-    color: #fff;
-}
-
-/* Formulários */
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
-
+/* =========================================
+   INPUTS GERAIS
+========================================= */
 input {
-    padding: 0.9rem;
-    border-radius: 8px;
-    border: none;
-    background-color: #202225;
+    width: 100%;
+    background-color: #1f2326;
+    border: 2px solid transparent;
+    border-bottom: 2px solid #5a5a5a;
     color: #fff;
+    padding: 15px;
     font-size: 1rem;
-    transition: border 0.2s, background 0.2s;
+    font-family: 'Montserrat', sans-serif;
+    outline: none;
+    transition: all 0.3s ease;
 }
 
 input::placeholder {
-    color: #b9bbbe;
+    color: #8b978f;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
 }
 
 input:focus {
-    outline: none;
-    border: 2px solid #7289da;
-    background-color: #2f3136;
+    border-bottom-color: #ff4655; /* Riot Red */
+    background-color: #2a2e33;
 }
 
-/* Botões */
-button {
-    padding: 0.9rem;
-    border-radius: 8px;
+/* =========================================
+   TELA DE LOGIN E CADASTRO
+========================================= */
+.login-container, 
+.cadastro-container {
+    background-color: #111111;
+    padding: 50px 40px;
+    width: 100%;
+    max-width: 420px;
+    border-top: 4px solid #ff4655;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.6);
+    text-align: center;
+    position: relative;
+    margin: auto; /* Mantém centralizado */
+}
+
+/* Detalhe estético no canto superior */
+.login-container::before, 
+.cadastro-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    background-color: #ff4655;
+    clip-path: polygon(100% 0, 0 0, 100% 100%);
+}
+
+.login-container h1, 
+.cadastro-container h1 {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    font-size: 2.8rem;
+    color: #ece8e1;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+}
+
+.error-msg {
+    background-color: rgba(255, 70, 85, 0.1);
+    border-left: 4px solid #ff4655;
+    color: #ff4655;
+    padding: 12px;
+    margin-bottom: 25px;
+    font-size: 0.9rem;
+    text-align: left;
+    font-weight: 600;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.login-container button[type="submit"], 
+.cadastro-container button[type="submit"] {
+    width: 100%;
+    background-color: #ff4655;
+    color: #ece8e1;
     border: none;
-    background-color: #7289da;
-    color: #fff;
-    font-weight: bold;
+    padding: 18px;
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-weight: 700;
     cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.3s ease, transform 0.1s;
+    clip-path: polygon(0 0, 100% 0, 100% 80%, 96% 100%, 0 100%);
+}
+
+.login-container button[type="submit"]:hover, 
+.cadastro-container button[type="submit"]:hover {
+    background-color: #ff5865;
+}
+
+.login-container button[type="submit"]:active, 
+.cadastro-container button[type="submit"]:active {
+    transform: scale(0.98);
+}
+
+.links {
+    margin-top: 25px;
+    font-size: 0.9rem;
+    color: #8b978f;
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.links a {
+    color: #ff4655;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.links a:hover {
+    color: #fff;
+}
+
+/* =========================================
+   TELA PRINCIPAL (HOME / DASHBOARD)
+========================================= */
+.valorant-dashboard {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin: auto;
+    padding-top: 20px;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    border-bottom: 2px solid #5a5a5a;
+    padding-bottom: 20px;
+}
+
+.dashboard-header h1 {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    font-size: 2.5rem;
+    color: #ece8e1;
+    letter-spacing: 1px;
+}
+
+.dashboard-header h1 span {
+    color: #ff4655;
+}
+
+.dashboard-header p {
+    color: #8b978f;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+/* Seleção de Agentes */
+.agent-selection {
+    background-color: #111111;
+    padding: 30px;
+    border: 1px solid #2a2e33;
+    position: relative;
+}
+
+.agent-selection::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: -1px;
+    width: 30px;
+    height: 30px;
+    border-top: 3px solid #ff4655;
+    border-left: 3px solid #ff4655;
+}
+
+.section-title {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    letter-spacing: 1.5px;
+    color: #ece8e1;
+}
+
+.agent-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 15px;
+}
+
+.agent-card {
+    background-color: #1f2326;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.agent-card img {
+    width: 100%;
+    max-width: 80px;
+    filter: grayscale(80%);
+    transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.agent-card span {
+    font-family: 'Oswald', sans-serif;
+    margin-top: 10px;
     font-size: 1rem;
-    transition: background 0.3s, transform 0.2s;
+    color: #8b978f;
+    letter-spacing: 1px;
 }
 
-button:hover {
-    background-color: #5b6eae;
-    transform: translateY(-2px);
+.agent-card:hover {
+    background-color: #2a2e33;
+    border-color: #5a5a5a;
 }
 
-/* Links */
-a {
-    color: #7289da;
+.agent-card:hover img {
+    filter: grayscale(0%);
+    transform: scale(1.1);
+}
+
+.agent-card.selected {
+    border-color: #ff4655;
+    background-color: rgba(255, 70, 85, 0.1);
+}
+
+.agent-card.selected img {
+    filter: grayscale(0%);
+}
+
+.agent-card.selected span {
+    color: #ff4655;
+}
+
+/* Configurações da Conta */
+.settings-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.setting-card {
+    background-color: #111111;
+    padding: 25px;
+    border: 1px solid #2a2e33;
+}
+
+.setting-card h3 {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: #ece8e1;
+}
+
+.input-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.msg-feedback {
+    font-size: 0.85rem;
+    color: #8b978f;
+    min-height: 18px;
+}
+
+/* Botões da Home */
+button {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    padding: 12px 20px;
+}
+
+.btn-primary {
+    background-color: #ece8e1;
+    color: #0f1923;
+    clip-path: polygon(0 0, 100% 0, 100% 70%, 90% 100%, 0 100%);
+}
+
+.btn-primary:hover {
+    background-color: #fff;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: #8b978f;
+    border: 1px solid #5a5a5a;
+    padding: 10px 20px;
+}
+
+.btn-secondary:hover {
+    color: #ece8e1;
+    border-color: #ece8e1;
+}
+
+.danger-zone {
+    grid-column: span 2;
+    background-color: rgba(255, 70, 85, 0.05);
+    border: 1px solid rgba(255, 70, 85, 0.3);
+    padding: 25px;
+    text-align: center;
+}
+
+.danger-zone p {
+    font-size: 0.9rem;
+    color: #8b978f;
+    margin-bottom: 15px;
+}
+
+.btn-danger {
+    background-color: #ff4655;
+    color: #ece8e1;
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    clip-path: polygon(0 0, 100% 0, 100% 70%, 95% 100%, 0 100%);
+}
+
+.btn-danger:hover {
+    background-color: #ff5865;
+}
+
+/* =========================================
+   FOOTER GERAL
+========================================= */
+.footer {
+    margin-top: 40px;
+    font-size: 0.85rem;
+    color: #5a5a5a;
+    font-weight: 600;
+    text-align: center;
+    width: 100%;
+}
+
+.footer a {
+    color: #8b978f;
     text-decoration: none;
     transition: color 0.3s;
 }
 
-a:hover {
-    color: #5b6eae;
+.footer a:hover {
+    color: #ff4655;
 }
 
-/* Mensagens de erro */
-.error-msg {
-    color: #fff;
-    background-color: #f04747; /* vermelho Discord */
-    padding: 10px 15px;
-    border-radius: 6px;
-    margin-bottom: 1rem;
-    font-weight: bold;
-    text-align: center;
+/* =========================================
+   PAINEL DE INFORMAÇÕES DO AGENTE
+========================================= */
+.agent-info-panel {
+    background-color: #1f2326;
+    border-left: 4px solid #ff4655;
+    padding: 25px;
+    margin-top: 25px;
     animation: fadeIn 0.3s ease-in-out;
 }
 
-/* Animação de aparecer */
+.agent-info-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #5a5a5a;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+.agent-info-header h3 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 2rem;
+    color: #ece8e1;
+    letter-spacing: 2px;
+    margin: 0;
+}
+
+.agent-role {
+    background-color: rgba(255, 70, 85, 0.1);
+    color: #ff4655;
+    padding: 5px 15px;
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    border: 1px solid rgba(255, 70, 85, 0.3);
+}
+
+.agent-description {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #8b978f;
+    margin-bottom: 20px;
+}
+
+.abilities-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.2rem;
+    color: #ece8e1;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+}
+
+.agent-abilities {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.agent-abilities li {
+    background-color: #111111;
+    padding: 10px 15px;
+    font-size: 0.85rem;
+    color: #ece8e1;
+    border-left: 2px solid #5a5a5a;
+    transition: border-color 0.2s;
+}
+
+.agent-abilities li:hover {
+    border-left-color: #ff4655;
+    background-color: #2a2e33;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* Texto pequeno (links de cadastro/login) */
-p {
-    color: #b9bbbe;
-    font-size: 0.9rem;
-}
-
-p a {
-    color: #7289da;
-    font-weight: bold;
-}
-
-/* Home container */
-.home-container h1 {
-    color: #fff;
-}
-
-.home-container p {
-    color: #b9bbbe;
-    margin: 1rem 0;
-}
-
-.home-container a {
-    display: inline-block;
-    padding: 0.7rem 1.2rem;
-    background-color: #7289da;
-    color: #fff;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: background 0.3s, transform 0.2s;
-}
-
-.home-container a:hover {
-    background-color: #5b6eae;
-    transform: translateY(-2px);
-}
-
-.footer {
-    position: fixed;      /* fixa no viewport */
-    bottom: 0;            /* colado no fundo */
-    left: 0;
-    width: 100%;          /* ocupa toda largura */
-    text-align: center;
-    padding: 1rem;
-    font-size: 0.85rem;
-    color: #b9bbbe;
-    background-color: #2f3136;
-    border-top: 1px solid #202225;
-}
-
-.footer a {
-    color: #7289da;
-    text-decoration: none;
-    font-weight: bold;
-    transition: color 0.3s;
-}
-
-.footer a:hover {
-    color: #5b6eae;
-}
-
-.hidden {
-    display: none;
-}
-
-.recovery-box {
-    margin-top: 20px;
-    padding: 15px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #fcfcfc;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-}
-
-.recovery-box h3 {
-    margin-top: 0;
-    font-size: 1.2rem;
-    color: #333;
-}
-
-.recovery-box input {
-    width: 100%;
-    margin-bottom: 10px;
-    padding: 10px;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    color: #333;
-    background-color: #fff;
-}
-
-.recovery-desc {
-    font-size: 0.9em;
-    color: #666;
-    margin-bottom: 15px;
-}
-
-.action-buttons {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.btn-primary,
-.btn-secondary {
-    border: none;
-    padding: 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    flex: 1;
-    font-weight: bold;
-}
-
-.btn-primary {
-    background-color: #007bff;
-    color: white;
-}
-
-.btn-secondary {
-    background-color: #e0e0e0;
-    color: #333;
-}
-
-.btn-primary:hover {
-    background-color: #0056b3;
-}
-
-.btn-secondary:hover {
-    background-color: #ccc;
-}
-
-.recovery-message {
-    margin-top: 15px;
-    font-weight: bold;
-    font-size: 0.9em;
-    text-align: center;
-}
-
-.message-success {
-    color: #28a745;
-}
-
-.message-error {
-    color: #d9534f;
-}
-
-.message-info {
-    color: #b9bbbe;
-}
-
-.top-space {
-    margin-top: 20px;
-}
-
-.space-bottom {
-    margin-bottom: 20px;
-}
-
-.danger-button {
-    color: #ff4f4f;
-}
-
-hr {
-    width: 100%;
-    border: 0;
-    border-top: 1px solid #4f545c;
-    margin: 0.75rem 0;
+/* =========================================
+   RESPONSIVIDADE (Telas menores)
+========================================= */
+@media (max-width: 768px) {
+    .settings-panel {
+        grid-template-columns: 1fr;
+    }
+    .danger-zone {
+        grid-column: span 1;
+    }
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    .agent-abilities {
+        grid-template-columns: 1fr;
+    }
 }

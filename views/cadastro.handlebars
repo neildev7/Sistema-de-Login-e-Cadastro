@@ -9,11 +9,22 @@
 
     <form action="/cadastro" method="POST" autocomplete="off">
         <input type="hidden" name="_csrf" value="{{csrfToken}}">
-        <input type="text" name="nome" placeholder="Nome" value="{{nome}}" required maxlength="{{maxNameLength}}">
-        <input type="email" name="email" placeholder="Email" value="{{email}}" required autocomplete="email">
-        <input type="password" name="senha" placeholder="Senha" required minlength="{{minPasswordLength}}" maxlength="{{maxPasswordLength}}" autocomplete="new-password">
+        
+        <div class="input-group">
+            <input type="text" name="nome" placeholder="Nome de usuário" value="{{nome}}" required maxlength="{{maxNameLength}}">
+        </div>
+
+        <div class="input-group">
+            <input type="email" name="email" placeholder="Email" value="{{email}}" required autocomplete="email">
+        </div>
+
+        <div class="input-group">
+            <input type="password" name="senha" placeholder="Senha" required minlength="{{minPasswordLength}}" maxlength="{{maxPasswordLength}}" autocomplete="new-password">
+        </div>
+
         <button type="submit">Cadastrar</button>
-        <p>Já tem uma conta? <a href="/login">Login</a></p>
+        
+        <p class="links">Já tem uma conta? <a href="/login">Fazer Login</a></p>
     </form>
 </div>
 
